@@ -19,6 +19,8 @@
 #define INFINITESITES
 */
 
+#include <stdbool.h>
+
 #include "paml.h"
 
 
@@ -1141,19 +1143,20 @@ int GenerateBlengthGH(char infile[])
    return(0);
 }
 
-
 int GetOptions(char *ctlf)
 {
    int  transform0 = ARCSIN_B; /* default transform: SQRT_B, LOG_B, ARCSIN_B */
-   int  iopt, i, j, nopt = 32, lline = 4096;
-   char line[4096], *pline, opt[33], *comment = "*#";
+   int  iopt, i, j, nopt = 34, lline = 4096;
+   char line[4096], *pline, opt[35], *comment = "*#";
    char *optstr[] = { "seed", "seqfile","treefile", "outfile", "mcmcfile", "checkpoint", "BayesFactorBeta",
         "seqtype", "aaRatefile", "icode", "noisy", "usedata", "ndata", "duplication", "model", "clock",
         "TipDate", "RootAge", "fossilerror", "alpha", "ncatG", "cleandata",
-        "BDparas", "kappa_gamma", "alpha_gamma", "rgene_gamma", "sigma2_gamma", 
-        "print", "burnin", "sampfreq", "nsample", "finetune" };
+        "BDparas", "kappa_gamma", "alpha_gamma", "rgene_gamma", "sigma2_gamma",
+        "print", "burnin", "sampfreq", "nsample", "finetune", "ckpfile", "hessianfile"};
    double t = 1, *eps = mcmc.steplength;
    FILE  *fctl = zopen(ctlf, "r");
+   bool hessianpath = false;
+   char hessianuserpath[4096];
 
    data.rgeneprior = 0;  /* default rate prior is gamma-Dirichlet. */
    data.transform = transform0;
@@ -1194,9 +1197,16 @@ int GetOptions(char *ctlf)
                case (11):
                   j = sscanf(pline + 1, "%d %s%d", &mcmc.usedata, com.inBVf, &data.transform);
                   if (mcmc.usedata == 2) {
-                     if (strchr(com.inBVf, '*')) { 
-                        strcpy(com.inBVf, "in.BV"); 
-                        data.transform = transform0; 
+                     if (strchr(com.inBVf, '*')) {
+                        if (hessianpath)
+                        {
+                           strcpy(com.inBVf, hessianuserpath);
+                        }
+                        else
+                        {
+                           strcpy(com.inBVf, "in.BV");
+                        }
+                        data.transform = transform0;
                      }
                      else if (j == 2)
                         data.transform = transform0;
@@ -1258,6 +1268,13 @@ int GetOptions(char *ctlf)
                   puts("finetune is deprecated now.");
                   break;
                   sscanf(pline + 1, "%d:%lf%lf%lf%lf%lf%lf", &j, eps, eps + 1, eps + 2, eps + 3, eps + 4, eps + 5);
+                  break;
+               case(32):
+                  sscanf(pline + 1, "%s", com.checkpointf);
+                  break;
+               case(33):
+                  sscanf(pline + 1, "%s", hessianuserpath);
+                  hessianpath = true;
                   break;
                }
                break;
