@@ -492,7 +492,7 @@ int SaveMCMCstate(char *filename, int ir, double lnpR, double lnL)
    fwrite(&lnL, sizeof(double), 1, f);
    fclose(f);
    free(tmp);
-   printf("iteration %6d: lnpR = %.2f lnL = %.2f\n", ir, lnpR, lnL);
+   printf("iteration %6d: lnpR = %.2f lnL = %.2f\n", ir+1, lnpR, lnL);
    return(0);
 }
 
@@ -4296,7 +4296,7 @@ int MCMC(FILE* fout)
       
       /* save MCMC state */
       if (com.checkpoint == 1 && k > 100 && ir > 0
-         && (ir + 1) % (int)(k * com.checkpointp) == 0)
+         && (ir + 1) % (k /10) == 0)
          SaveMCMCstate(com.checkpointf, ir, data.lnpR, lnL);
    }  /* for(ir) */
 
