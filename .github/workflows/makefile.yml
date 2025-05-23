@@ -148,22 +148,27 @@ jobs:
           - name: Zip repository
             shell: pwsh
             run: |
+              $source = Get-Location
+              $temp = "temp_zip"
               $exclude = @("dist", ".git")
-              $basePath = Get-Location
-          
-              # Get all files, excluding those inside 'dist/' or '.git/'
-              $files = Get-ChildItem -Recurse -File | Where-Object {
-                $relativePath = $_.FullName.Substring($basePath.Path.Length + 1)
+              Remove-Item -Recurse -Force $temp -ErrorAction SilentlyContinue
+              New-Item -ItemType Directory -Path $temp | Out-Null
+              Get-ChildItem -Recurse -Directory | Where-Object {
+                $relative = $_.FullName.Substring($source.Path.Length + 1)
                 foreach ($ex in $exclude) {
-                  if ($relativePath -like "$ex\*") { return $false }
+                  if ($relative -like "$ex\*") { return $false }
                 }
                 return $true
+              } | ForEach-Object {
+                Copy-Item $_.FullName -Destination (Join-Path $temp $_.Name) -Recurse
               }
-              New-Item -ItemType Directory -Force -Path dist
-              Compress-Archive -Path $files.FullName -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
+              
+              Get-ChildItem -File | Copy-Item -Destination $temp
+              New-Item -ItemType Directory -Force -Path dist | Out-Null
+              Compress-Archive -Path $temp -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
+              Remove-Item -Recurse -Force $temp
               
           - name: Upload Built Binary
-            # Only upload for one of the gcc & cmake tests
             uses: actions/upload-artifact@v4
             with:
               name: Windows-x86-64
