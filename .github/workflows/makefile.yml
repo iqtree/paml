@@ -37,7 +37,7 @@ jobs:
         path: dist/paml-4.10.linux-x86_64.tar.gz
         if-no-files-found: error
       
-  build-linux--aarch64:
+  build-linux-aarch64:
       name: Linux aarch64
       runs-on: ubuntu-22.04-arm
   
@@ -66,6 +66,63 @@ jobs:
           name: Linux-aarch64
           path: dist/paml-4.10.linux-aarch64.tar.gz
           if-no-files-found: error
-            
-
+  build-macos-x86_64:
+        name: Mac OS x86-64
+        runs-on: macos-13
+    
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+    
+        - name: Build
+          run: |
+            mkdir bin
+            cd src
+            make
+            rm *.o
+            mv baseml codeml basemlg mcmctree infinitesites pamp evolver yn00 chi2 ../bin
+            cd ..
+            mkdir -p dist
+            tar --exclude='.git' \
+            --exclude='./dist' \
+            -czvf dist/paml-4.10.macos-x86_64.tar.gz .
+    
+    
+        - name: Upload Built Binary
+          # Only upload for one of the gcc & cmake tests
+          uses: actions/upload-artifact@v4
+          with:
+            name: Mac-x86-64
+            path: dist/paml-4.10.macos-x86_64.tar.gz
+            if-no-files-found: error
+  build-macos-arm:
+        name: Mac OS ARM64
+        runs-on: macos-14
+    
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+    
+        - name: Build
+          run: |
+            mkdir bin
+            cd src
+            make
+            rm *.o
+            mv baseml codeml basemlg mcmctree infinitesites pamp evolver yn00 chi2 ../bin
+            cd ..
+            mkdir -p dist
+            tar --exclude='.git' \
+            --exclude='./dist' \
+            -czvf dist/paml-4.10.macos-arm.tar.gz .
+    
+    
+        - name: Upload Built Binary
+          # Only upload for one of the gcc & cmake tests
+          uses: actions/upload-artifact@v4
+          with:
+            name: MAC-Arm
+            path: dist/paml-4.10.macos-arm.tar.gz
+            if-no-files-found: error
   
+    
