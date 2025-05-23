@@ -7,8 +7,8 @@ on:
     branches: [ "master", "buildpipeline" ]
 
 jobs:
-  build:
-
+  build-linux-x86-64:
+    name: Linux x86-64
     runs-on: ubuntu-22.04
 
     steps:
@@ -37,8 +37,40 @@ jobs:
         path: dist/paml-4.10.linux-x86_64.tar.gz
         if-no-files-found: error
           
-    - name: Run check
-      run: make check
-
     - name: Run distcheck
       run: make distcheck
+      
+  build-linux--aarch64:
+      name: Linux aarch64
+      runs-on: ubuntu-22.04-arm
+  
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+  
+      - name: Build
+        run: |
+          mkdir bin
+          cd src
+          make
+          rm *.o
+          mv baseml codeml basemlg mcmctree infinitesites pamp evolver yn00 chi2 ../bin
+          cd ..
+          mkdir -p dist
+          tar --exclude='.git' \
+          --exclude='./dist' \
+          -czvf dist/paml-4.10.linux-aarch64.tar.gz .
+  
+  
+      - name: Upload Built Binary
+        # Only upload for one of the gcc & cmake tests
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linux AArch64
+          path: dist/paml-4.10.linux-aarch64.tar.gz
+          if-no-files-found: error
+            
+      - name: Run distcheck
+        run: make distcheck
+
+  
