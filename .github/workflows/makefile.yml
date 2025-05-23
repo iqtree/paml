@@ -167,6 +167,6 @@ jobs:
             uses: actions/upload-artifact@v4
             with:
               name: Windows-x86-64
-              path: /paml-4.10.win-x86_64.zip
+              path: dist/paml-4.10.win-x86_64.zip
               if-no-files-found: error
   
