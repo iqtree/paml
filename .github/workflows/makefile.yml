@@ -147,9 +147,9 @@ jobs:
               mkdir -p dist
               
           - name: Zip repository
-            shell: bash
+            shell: pwsh
             run: |
-              zip -r dist/paml-4.10.win-x86_64.zip paml-4.10.win-x86_64 -x "paml-4.10.win-x86_64/.git/*" "paml-4.10.win-x86_64/dist/*"    
+              Compress-Archive -Path . -DestinationPath dist/paml-4.10.win-x86_64.zip -Force   
 
       
       
