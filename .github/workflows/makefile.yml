@@ -56,7 +56,7 @@ jobs:
           mkdir -p dist
           tar --exclude='.git' \
           --exclude='./dist' \
-          -czvf dist/paml-4.10.linux-aarch64.tar.gz .
+          -czvf dist/paml-4.10.linux-arm.tar.gz .
   
   
       - name: Upload Built Binary
@@ -64,8 +64,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Linux-aarch64
-          path: dist/paml-4.10.linux-aarch64.tar.gz
+          path: dist/paml-4.10.linux-arm.tar.gz
           if-no-files-found: error
+          
   build-macos-x86_64:
         name: Mac OS x86-64
         runs-on: macos-13
@@ -85,7 +86,7 @@ jobs:
             mkdir -p dist
             tar --exclude='.git' \
             --exclude='./dist' \
-            -czvf dist/paml-4.10.macos-x86_64.tar.gz .
+            -czvf dist/paml-4.10.mac-x86_64.tar.gz .
     
     
         - name: Upload Built Binary
@@ -93,8 +94,9 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: Mac-x86-64
-            path: dist/paml-4.10.macos-x86_64.tar.gz
+            path: dist/paml-4.10.mac-x86_64.tar.gz
             if-no-files-found: error
+            
   build-macos-arm:
         name: Mac OS ARM64
         runs-on: macos-14
@@ -114,7 +116,7 @@ jobs:
             mkdir -p dist
             tar --exclude='.git' \
             --exclude='./dist' \
-            -czvf dist/paml-4.10.macos-arm.tar.gz .
+            -czvf dist/paml-4.10.mac-arm.tar.gz .
     
     
         - name: Upload Built Binary
@@ -122,7 +124,37 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: MAC-Arm
-            path: dist/paml-4.10.macos-arm.tar.gz
+            path: dist/paml-4.10.mac-arm.tar.gz
             if-no-files-found: error
+            
+  build-windows-x86_64:
+          name: Windows x86-64
+          runs-on: windows-2022
+      
+          steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+      
+          - name: Build
+            shell: cmd
+            run: |
+              mkdir bin
+              cd src
+              make
+              rm *.o
+              mv baseml codeml basemlg mcmctree infinitesites pamp evolver yn00 chi2 ../bin
+              cd ..
+              mkdir -p dist
+              tar --exclude='.git' \
+              --exclude='./dist' \
+              -czvf dist/paml-4.10.win-x86_64.tar.gz .
+      
+      
+          - name: Upload Built Binary
+            # Only upload for one of the gcc & cmake tests
+            uses: actions/upload-artifact@v4
+            with:
+              name: Windows-x86-64
+              path: dist/paml-4.10.win-x86_64.tar.gz
+              if-no-files-found: error
   
-    
