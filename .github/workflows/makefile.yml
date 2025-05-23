@@ -147,18 +147,9 @@ jobs:
               mkdir -p dist
               
           - name: Zip repository
-            shell: pwsh
+            shell: bash
             run: |
-              New-Item -ItemType Directory -Force -Path dist
-              $exclude = @(".git", "dist")
-              $files = Get-ChildItem -Path paml-4.10.win-x86_64 -Recurse -File | Where-Object {
-                  foreach ($ex in $exclude) {
-                      if ($_.FullName -like "*\$ex\*") { return $false }
-                  }
-                  return $true
-              }
-
-              Compress-Archive -Path $files.FullName -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
+              zip -r dist/paml-4.10.win-x86_64.zip paml-4.10.win-x86_64 -x "paml-4.10.win-x86_64/.git/*" "paml-4.10.win-x86_64/dist/*    
 
       
       
