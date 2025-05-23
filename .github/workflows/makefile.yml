@@ -134,6 +134,10 @@ jobs:
           steps:
           - name: Checkout
             uses: actions/checkout@v4
+
+          - name: Install zip
+            run: choco install zip -y
+            shell: powershell
       
           - name: Build
             shell: cmd
@@ -146,27 +150,10 @@ jobs:
               cd ..
               
           - name: Zip repository
-            shell: pwsh
+            shell: bash
             run: |
-              $source = Get-Location
-              $temp = "temp_zip"
-              $exclude = @("dist", ".git")
-              Remove-Item -Recurse -Force $temp -ErrorAction SilentlyContinue
-              New-Item -ItemType Directory -Path $temp | Out-Null
-              Get-ChildItem -Recurse -Directory | Where-Object {
-                $relative = $_.FullName.Substring($source.Path.Length + 1)
-                foreach ($ex in $exclude) {
-                  if ($relative -like "$ex\*") { return $false }
-                }
-                return $true
-              } | ForEach-Object {
-                Copy-Item $_.FullName -Destination (Join-Path $temp $_.Name) -Recurse
-              }
-              
-              Get-ChildItem -File | Copy-Item -Destination $temp
-              New-Item -ItemType Directory -Force -Path dist | Out-Null
-              Compress-Archive -Path $temp -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
-              Remove-Item -Recurse -Force $temp
+              mkdir -p dist
+              zip -r dist/paml-4.10.win-x86_64.zip . -x ".git/*" "dist/*"
               
           - name: Upload Built Binary
             uses: actions/upload-artifact@v4
