@@ -144,7 +144,6 @@ jobs:
               rm *.o
               mv baseml codeml basemlg mcmctree infinitesites pamp evolver yn00 chi2 ../bin
               cd ..
-              mkdir -p dist
               
           - name: Zip repository
             shell: pwsh
