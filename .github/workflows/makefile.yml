@@ -148,10 +148,9 @@ jobs:
           - name: Zip repository
             shell: pwsh
             run: |
-              Compress-Archive -Path . -DestinationPath dist/paml-4.10.win-x86_64.zip -Force   
-
-      
-      
+              New-Item -ItemType Directory -Force -Path dist
+              Compress-Archive -Path . -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
+              
           - name: Upload Built Binary
             # Only upload for one of the gcc & cmake tests
             uses: actions/upload-artifact@v4
