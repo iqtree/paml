@@ -23,14 +23,18 @@ jobs:
         rm *.o
         mv baseml codeml basemlg mcmctree infinitesites pamp evolver yn00 chi2 ../bin
         cd ..
-        tar --exclude='.git' --exclude='*.tar.gz' -czvf paml-4.10.linux-x86_64.tar.gz .
+        mkdir -p dist
+        tar --exclude='.git' \
+        --exclude='./dist' \
+        -czvf dist/paml-4.10.linux-x86_64.tar.gz .
+
 
     - name: Upload Built Binary
       # Only upload for one of the gcc & cmake tests
       uses: actions/upload-artifact@v4
       with:
         name: Linux x86-64
-        path: build/paml*.tar.gz
+        path: dist/paml-4.10.linux-x86_64.tar.gz
         if-no-files-found: error
           
     - name: Run check
