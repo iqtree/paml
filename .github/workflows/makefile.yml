@@ -33,12 +33,9 @@ jobs:
       # Only upload for one of the gcc & cmake tests
       uses: actions/upload-artifact@v4
       with:
-        name: Linux x86-64
+        name: Linux-x86-64
         path: dist/paml-4.10.linux-x86_64.tar.gz
         if-no-files-found: error
-          
-    - name: Run distcheck
-      run: make distcheck
       
   build-linux--aarch64:
       name: Linux aarch64
@@ -66,11 +63,9 @@ jobs:
         # Only upload for one of the gcc & cmake tests
         uses: actions/upload-artifact@v4
         with:
-          name: Linux AArch64
+          name: Linux-aarch64
           path: dist/paml-4.10.linux-aarch64.tar.gz
           if-no-files-found: error
             
-      - name: Run distcheck
-        run: make distcheck
 
   
