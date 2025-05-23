@@ -145,9 +145,15 @@ jobs:
               mv baseml codeml basemlg mcmctree infinitesites pamp evolver yn00 chi2 ../bin
               cd ..
               mkdir -p dist
-              tar --exclude='.git' \
-              --exclude='./dist' \
-              -czvf dist/paml-4.10.win-x86_64.tar.gz .
+              
+          - name: Zip repository
+            shell: pwsh
+            run: |
+              New-Item -ItemType Directory -Force -Path dist
+              $exclude = @(".git", "dist")
+              $files = Get-ChildItem -Recurse | Where-Object { $exclude -notcontains $_.Name }
+              Compress-Archive -Path $files.FullName -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
+
       
       
           - name: Upload Built Binary
@@ -155,6 +161,6 @@ jobs:
             uses: actions/upload-artifact@v4
             with:
               name: Windows-x86-64
-              path: dist/paml-4.10.win-x86_64.tar.gz
+              path: dist/paml-4.10.win-x86_64.zip
               if-no-files-found: error
   
