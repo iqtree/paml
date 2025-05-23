@@ -149,13 +149,13 @@ jobs:
             shell: pwsh
             run: |
               New-Item -ItemType Directory -Force -Path dist
-              Compress-Archive -Path . -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
+              Compress-Archive -Path . -DestinationPath paml-4.10.win-x86_64.zip -Force
               
           - name: Upload Built Binary
             # Only upload for one of the gcc & cmake tests
             uses: actions/upload-artifact@v4
             with:
               name: Windows-x86-64
-              path: dist/paml-4.10.win-x86_64.zip
+              path: /paml-4.10.win-x86_64.zip
               if-no-files-found: error
   
