@@ -148,8 +148,19 @@ jobs:
           - name: Zip repository
             shell: pwsh
             run: |
+              $exclude = @("dist", ".git")
+              $basePath = Get-Location
+          
+              # Get all files, excluding those inside 'dist/' or '.git/'
+              $files = Get-ChildItem -Recurse -File | Where-Object {
+                $relativePath = $_.FullName.Substring($basePath.Path.Length + 1)
+                foreach ($ex in $exclude) {
+                  if ($relativePath -like "$ex\*") { return $false }
+                }
+                return $true
+              }
               New-Item -ItemType Directory -Force -Path dist
-              Compress-Archive -Path . -DestinationPath paml-4.10.win-x86_64.zip -Force
+              Compress-Archive -Path $files.FullName -DestinationPath dist/paml-4.10.win-x86_64.zip -Force
               
           - name: Upload Built Binary
             # Only upload for one of the gcc & cmake tests
