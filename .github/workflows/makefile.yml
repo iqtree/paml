@@ -149,7 +149,7 @@ jobs:
           - name: Zip repository
             shell: bash
             run: |
-              zip -r dist/paml-4.10.win-x86_64.zip paml-4.10.win-x86_64 -x "paml-4.10.win-x86_64/.git/*" "paml-4.10.win-x86_64/dist/*    
+              zip -r dist/paml-4.10.win-x86_64.zip paml-4.10.win-x86_64 -x "paml-4.10.win-x86_64/.git/*" "paml-4.10.win-x86_64/dist/*"    
 
       
       
